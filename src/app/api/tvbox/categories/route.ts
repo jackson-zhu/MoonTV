@@ -123,13 +123,25 @@ export async function GET(request: Request) {
         pagecount: 999,
         limit: pageSize,
         total: 0,
-        list: list.map((item: any) => ({
-          vod_id: item.id,
-          vod_name: item.title,
-          vod_pic: item.poster,
-          vod_year: item.year || '',
-          vod_remarks: item.rate || '',
-        })),
+        list: list.map((item: any) => {
+          const poster = item.poster || '';
+
+          // 豆瓣图片统一通过 MoonTV 服务端代理
+          const vodPic =
+            poster.includes('doubanio.com')
+              ? `${origin}/api/image-proxy?${new URLSearchParams({
+                  url: poster,
+                }).toString()}`
+              : poster;
+
+          return {
+            vod_id: item.id,
+            vod_name: item.title,
+            vod_pic: vodPic,
+            vod_year: item.year || '',
+            vod_remarks: item.rate || '',
+          };
+        }),
       };
 
       return NextResponse.json(payload, {
