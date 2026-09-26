@@ -104,6 +104,7 @@ export async function GET(request: Request) {
       } else if (category === '热门') {
         category = '';
         label = '';
+        sort = 'T';
       }
 
       if (category) qs.set('category', category);
