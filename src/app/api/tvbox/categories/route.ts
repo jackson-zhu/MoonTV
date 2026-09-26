@@ -125,15 +125,17 @@ export async function GET(request: Request) {
         total: 0,
         list: list.map((item: any) => {
           const poster = item.poster || '';
-
-          // 豆瓣图片统一通过 MoonTV 服务端代理
-          const vodPic =
-            poster.includes('doubanio.com')
-              ? `${origin}/api/image-proxy?${new URLSearchParams({
-                  url: poster,
-                }).toString()}`
-              : poster;
-
+          let vodPic = poster;
+          try {
+            const posterUrl = new URL(poster);
+            if (posterUrl.hostname.endsWith('doubanio.com')) {
+              vodPic = `${origin}/api/image-proxy?${new URLSearchParams({
+                url: poster,
+              }).toString()}`;
+            }
+          } catch {
+            // poster 不是有效 URL，保持原值
+          }
           return {
             vod_id: item.id,
             vod_name: item.title,
@@ -143,7 +145,6 @@ export async function GET(request: Request) {
           };
         }),
       };
-
       return NextResponse.json(payload, {
         headers: {
           'Cache-Control': `public, max-age=${cacheTime}, s-maxage=0`,
