@@ -59,8 +59,7 @@ export async function GET(request: NextRequest) {
     searchParams.get('year') === 'all' ? '' : searchParams.get('year');
   const platform =
     searchParams.get('platform') === 'all' ? '' : searchParams.get('platform');
-  //const sort = searchParams.get('sort') === 'T' ? '' : searchParams.get('sort');
-  const sort = searchParams.get('sort') || '';
+  const sort = searchParams.get('sort') === 'T' ? '' : searchParams.get('sort');
   const label =
     searchParams.get('label') === 'all' ? '' : searchParams.get('label');
 
